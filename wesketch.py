@@ -1,6 +1,5 @@
-import streamlit as st
-import json
-import pandas as pd
+
+    import streamlit as st
 
 st.set_page_config(
     page_title="ArchSketch Atlas",
@@ -8,87 +7,97 @@ st.set_page_config(
     layout="wide"
 )
 
+import base64
+from pathlib import Path
+
+# ── Load images from local files ──────────────────────────────────────────────
+def img_to_base64(path):
+    with open(path, "rb") as f:
+        ext = Path(path).suffix.lower().replace(".", "")
+        mime = "jpeg" if ext == "jpg" else ext
+        return f"data:image/{mime};base64,{base64.b64encode(f.read()).decode()}"
+
 SKETCHES = [
     {
-        "id": "AS-0001", "type": "arch",
+        "id": "AS-0001",
         "title": "Milan Duomo - Gothic Cathedral",
-        "subtitle": "Pencil technical illustration with architectural annotations",
-        "location": "Milan, Italy", "lat": 45.4642, "lon": 9.1900,
-        "style": "Gothic Revival", "technique": "Pencil + Ink Wash", "period": "14th Century",
-        "tags": ["cathedral", "gothic", "spires", "dome", "ornamental"],
-        "image": "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=500&q=80"
+        "type": "arch",
+        "style": "Gothic Revival",
+        "technique": "Pencil + Ink Wash",
+        "location": "Milan, Italy",
+        "file": "download__1_.webp"
     },
     {
-        "id": "AS-0002", "type": "arch",
+        "id": "AS-0002",
         "title": "Fantasy Castle - Medieval Fortress",
-        "subtitle": "Pen sketch of a fairytale castle with arched bridge and towers",
-        "location": "Loire Valley, France", "lat": 47.6609, "lon": 0.8799,
-        "style": "Romanesque / Fantasy", "technique": "Fine Liner Pen", "period": "12th Century Inspired",
-        "tags": ["castle", "medieval", "towers", "bridge", "fantasy"],
-        "image": "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=500&q=80"
+        "type": "arch",
+        "style": "Romanesque / Fantasy",
+        "technique": "Fine Liner Pen",
+        "location": "Loire Valley, France",
+        "file": "8dbc040517627df2c231b1960a11ea9d.jpg"
     },
     {
-        "id": "AS-0003", "type": "scene",
+        "id": "AS-0003",
         "title": "Garden Waterfall - Natural Scene",
-        "subtitle": "Graphite landscape study with cascading water and stepping stones",
-        "location": "Kyoto, Japan", "lat": 35.0116, "lon": 135.7681,
-        "style": "Naturalistic Landscape", "technique": "Graphite Pencil", "period": "Contemporary",
-        "tags": ["waterfall", "garden", "rocks", "nature", "reflection"],
-        "image": "https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=500&q=80"
+        "type": "scene",
+        "style": "Naturalistic Landscape",
+        "technique": "Graphite Pencil",
+        "location": "Kyoto, Japan",
+        "file": "9f8bb1bb3eab80672f50a9fe7d808d6f.jpg"
     },
     {
-        "id": "AS-0004", "type": "interior",
+        "id": "AS-0004",
         "title": "Grand Hall - Interior Perspective",
-        "subtitle": "Ballpoint pen one-point perspective of a palatial neoclassical interior",
-        "location": "St. Petersburg, Russia", "lat": 59.9311, "lon": 30.3609,
-        "style": "Neoclassical", "technique": "Ballpoint Pen", "period": "18th Century",
-        "tags": ["interior", "columns", "stairs", "perspective", "ballpoint"],
-        "image": "https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=500&q=80"
+        "type": "interior",
+        "style": "Neoclassical",
+        "technique": "Ballpoint Pen",
+        "location": "St. Petersburg, Russia",
+        "file": "44a492f4a756219233f5d44513dce581.jpg"
     },
     {
-        "id": "AS-0005", "type": "urban",
+        "id": "AS-0005",
         "title": "Puddle Reflection - Urban Building",
-        "subtitle": "Surreal pencil drawing of a Victorian building mirrored in a rain puddle",
-        "location": "London, UK", "lat": 51.5074, "lon": -0.1278,
-        "style": "Surrealism / Urban", "technique": "Pencil Hatching", "period": "Contemporary",
-        "tags": ["reflection", "puddle", "building", "surreal", "urban"],
-        "image": "https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=500&q=80"
+        "type": "urban",
+        "style": "Surrealism / Urban",
+        "technique": "Pencil Hatching",
+        "location": "London, UK",
+        "file": "13e6ba8b4488499b447f514839f5b6cd.jpg"
     },
     {
-        "id": "AS-0006", "type": "urban",
+        "id": "AS-0006",
         "title": "Underground Station - Metro Platform",
-        "subtitle": "Charcoal drawing of a vaulted metro station with atmospheric lighting",
-        "location": "Paris, France", "lat": 48.8566, "lon": 2.3522,
-        "style": "Industrial / Atmospheric", "technique": "Charcoal", "period": "Contemporary",
-        "tags": ["metro", "tunnel", "train", "atmosphere", "arches"],
-        "image": "https://images.unsplash.com/photo-1569960193803-0d7eb58f5b8e?w=500&q=80"
+        "type": "urban",
+        "style": "Industrial / Atmospheric",
+        "technique": "Charcoal",
+        "location": "Paris, France",
+        "file": "556b93371196faa770e3897d82d10df0.jpg"
     },
     {
-        "id": "AS-0007", "type": "urban",
+        "id": "AS-0007",
         "title": "Old Town Alley - Cobblestone Street",
-        "subtitle": "Pencil sketch of a narrow Mediterranean alleyway with worn steps",
-        "location": "Dubrovnik, Croatia", "lat": 42.6507, "lon": 18.0944,
-        "style": "Mediterranean Urban", "technique": "Pencil Sketch", "period": "17th Century Context",
-        "tags": ["alley", "cobblestone", "steps", "arch", "mediterranean"],
-        "image": "https://images.unsplash.com/photo-1467803738586-46b7eb7b16a1?w=500&q=80"
+        "type": "urban",
+        "style": "Mediterranean Urban",
+        "technique": "Pencil Sketch",
+        "location": "Dubrovnik, Croatia",
+        "file": "292b02037f648f6c696718a4366a1739.webp"
     },
     {
-        "id": "AS-0008", "type": "urban",
+        "id": "AS-0008",
         "title": "Lisbon Tram - Street Reflection",
-        "subtitle": "Graphite study of a vintage tram with a dramatic wet-street reflection",
-        "location": "Lisbon, Portugal", "lat": 38.7169, "lon": -9.1395,
-        "style": "Urban Realism", "technique": "Graphite + Ink", "period": "Contemporary",
-        "tags": ["tram", "street", "reflection", "lisbon", "vintage"],
-        "image": "https://images.unsplash.com/photo-1558981403-c5f9899a28bc?w=500&q=80"
+        "type": "urban",
+        "style": "Urban Realism",
+        "technique": "Graphite + Ink",
+        "location": "Lisbon, Portugal",
+        "file": "df7589de976634ae0a97952fab719619.jpg"
     },
     {
-        "id": "AS-0009", "type": "3d",
+        "id": "AS-0009",
         "title": "Chess King - 3D Object Study",
-        "subtitle": "Detailed charcoal drawing of a chess king piece - an exercise in form and shadow",
-        "location": "Study Exercise", "lat": 0.0, "lon": 0.0,
-        "style": "Object Study / 3D", "technique": "Charcoal + Blending", "period": "Contemporary",
-        "tags": ["chess", "3d", "object", "shading", "form"],
-        "image": "https://images.unsplash.com/photo-1529699211952-734e80c4d42b?w=500&q=80"
+        "type": "3d",
+        "style": "Object Study / 3D",
+        "technique": "Charcoal + Blending",
+        "location": "Study Exercise",
+        "file": "e867ecffda0b09b5f24ddcd8dd89d59b.webp"
     }
 ]
 
@@ -100,22 +109,21 @@ TYPE_LABELS = {
     "3d": "3D Object"
 }
 
-# ── Sidebar ──────────────────────────────────────────────────────────────────
+# ── Sidebar ───────────────────────────────────────────────────────────────────
 st.sidebar.title("ArchSketch Atlas")
-st.sidebar.markdown("A sketch library with real-world coordinates for beginner architects.")
+st.sidebar.markdown("A sketch library for beginner architects.")
 st.sidebar.markdown("---")
 
-page = st.sidebar.radio("Navigate", ["Gallery", "Map View", "Streamlit Guide", "GitHub Setup"])
+page = st.sidebar.radio("Navigate", ["Gallery", "Streamlit Guide", "GitHub Setup"])
 
 st.sidebar.markdown("---")
-st.sidebar.markdown("**Filter Sketches**")
+st.sidebar.markdown("**Filter**")
 
-type_options = ["All"] + sorted(set(TYPE_LABELS[s["type"]] for s in SKETCHES))
+type_options = ["All", "Architecture", "Landscape", "Urban", "Interior", "3D Object"]
 selected_type = st.sidebar.selectbox("Category", type_options)
-
 search_query = st.sidebar.text_input("Search", placeholder="style, location, technique...")
 
-# ── Filter data ───────────────────────────────────────────────────────────────
+# ── Filter ────────────────────────────────────────────────────────────────────
 def filter_sketches(sketches, type_filter, query):
     result = sketches
     if type_filter != "All":
@@ -128,14 +136,13 @@ def filter_sketches(sketches, type_filter, query):
             or q in s["style"].lower()
             or q in s["location"].lower()
             or q in s["technique"].lower()
-            or any(q in tag for tag in s["tags"])
         ]
     return result
 
 filtered = filter_sketches(SKETCHES, selected_type, search_query)
 
 # ══════════════════════════════════════════════════════════════════════════════
-# PAGE: GALLERY
+# GALLERY
 # ══════════════════════════════════════════════════════════════════════════════
 if page == "Gallery":
     st.title("Sketch Gallery")
@@ -143,191 +150,110 @@ if page == "Gallery":
     st.markdown("---")
 
     if not filtered:
-        st.info("No sketches match your search. Try clearing the filters.")
+        st.info("No sketches match your filter. Try clearing the search.")
     else:
         cols = st.columns(3)
         for i, sketch in enumerate(filtered):
             with cols[i % 3]:
-                st.image(sketch["image"], use_container_width=True)
+                # Load image directly from file sitting next to wesketch.py
+                st.image(sketch["file"], use_container_width=True)
                 st.markdown(f"**{sketch['title']}**")
-                st.caption(f"{TYPE_LABELS[sketch['type']]} | {sketch['style']}")
+                st.caption(f"{TYPE_LABELS[sketch['type']]}  |  {sketch['style']}")
                 st.caption(f"Technique: {sketch['technique']}")
                 st.caption(f"📍 {sketch['location']}")
-                st.code(f"lat: {sketch['lat']:.4f}  lon: {sketch['lon']:.4f}", language=None)
-
-                with st.expander("Full coordinate data"):
-                    payload = {
-                        "dataset_id": sketch["id"],
-                        "title": sketch["title"],
-                        "lat": sketch["lat"],
-                        "lon": sketch["lon"],
-                        "location": sketch["location"],
-                        "style": sketch["style"],
-                        "technique": sketch["technique"],
-                        "period": sketch["period"],
-                        "type": sketch["type"],
-                        "tags": sketch["tags"],
-                        "image_url": sketch["image"]
-                    }
-                    st.json(payload)
-                st.markdown("---")
+                st.markdown("")
 
 # ══════════════════════════════════════════════════════════════════════════════
-# PAGE: MAP VIEW
-# ══════════════════════════════════════════════════════════════════════════════
-elif page == "Map View":
-    st.title("Map View")
-    st.markdown("Geographic locations of all sketches in the library. Each pin represents a real building or site.")
-    st.markdown("---")
-
-    map_data = [s for s in filtered if not (s["lat"] == 0.0 and s["lon"] == 0.0)]
-
-    if not map_data:
-        st.warning("No mappable locations in your current filter selection.")
-    else:
-        df = pd.DataFrame([{"lat": s["lat"], "lon": s["lon"], "title": s["title"]} for s in map_data])
-        st.map(df[["lat", "lon"]])
-        st.markdown("---")
-        st.subheader("Location Reference")
-        for s in map_data:
-            col1, col2, col3 = st.columns([2, 1, 1])
-            col1.markdown(f"**{s['title']}**  \n{s['location']}")
-            col2.markdown(f"`{s['lat']:.4f}° N`")
-            col3.markdown(f"`{s['lon']:.4f}° E`")
-
-# ══════════════════════════════════════════════════════════════════════════════
-# PAGE: STREAMLIT GUIDE
+# STREAMLIT GUIDE
 # ══════════════════════════════════════════════════════════════════════════════
 elif page == "Streamlit Guide":
     st.title("Build with Streamlit")
-    st.markdown("Follow these steps to build your own architectural sketch explorer. No web experience needed.")
+    st.markdown("Follow these steps to create your own architectural sketch app.")
     st.markdown("---")
 
     st.subheader("Step 1 - Install Streamlit")
-    st.code("""# Open your terminal and run:
-mkdir archsketch-app
+    st.code("""mkdir archsketch-app
 cd archsketch-app
-pip install streamlit pandas pillow requests
-
-# Verify installation:
+pip install streamlit
 streamlit hello""", language="bash")
 
     st.subheader("Step 2 - Create app.py")
-    st.markdown("Create a file called `app.py` in your project folder:")
     st.code("""import streamlit as st
-import pandas as pd
-import json
+from PIL import Image
 
-st.set_page_config(page_title="ArchSketch Atlas", page_icon="🏛", layout="wide")
-st.title("🏛 ArchSketch Atlas")
+st.set_page_config(page_title="My Sketch App", layout="wide")
+st.title("My Architecture Sketches")
 
-# Load your JSON dataset
-with open("sketches.json") as f:
-    data = json.load(f)
+img = Image.open("sketch1.jpg")
+st.image(img, caption="My first sketch", use_container_width=True)
 
-df = pd.DataFrame(data)
+st.markdown("**Style:** Gothic Revival")
+st.markdown("**Technique:** Pencil + Ink")
+st.markdown("**Location:** Milan, Italy")""", language="python")
 
-# Sidebar filter
-style = st.sidebar.selectbox("Filter by style", ["All"] + df["style"].unique().tolist())
-if style != "All":
-    df = df[df["style"] == style]
+    st.subheader("Step 3 - Grid layout")
+    st.code("""import streamlit as st
+from PIL import Image
 
-# Map view
-st.subheader("Locations on Map")
-st.map(df[["lat", "lon"]])
+sketches = [
+    {"file": "sketch1.jpg", "title": "Milan Duomo",     "style": "Gothic Revival"},
+    {"file": "sketch2.jpg", "title": "Garden Waterfall","style": "Naturalistic"},
+    {"file": "sketch3.jpg", "title": "Lisbon Tram",     "style": "Urban Realism"},
+]
 
-# Gallery grid
-st.subheader("Sketch Gallery")
 cols = st.columns(3)
-for i, row in df.iterrows():
+for i, s in enumerate(sketches):
     with cols[i % 3]:
-        st.image(row["image_url"], caption=row["title"], use_container_width=True)
-        st.code(f"lat: {row['lat']:.4f}  lon: {row['lon']:.4f}", language=None)
-        st.caption(row["style"] + " | " + row["technique"])""", language="python")
+        st.image(Image.open(s["file"]), use_container_width=True)
+        st.markdown(f"**{s['title']}**")
+        st.caption(s["style"])""", language="python")
 
-    st.subheader("Step 3 - Save your sketch data")
-    st.markdown("Create `sketches.json` by expanding any sketch card in the Gallery tab and copying the JSON.")
-    st.code("""# sketches.json structure:
-[
-  {
-    "dataset_id": "AS-0001",
-    "title": "Milan Duomo - Gothic Cathedral",
-    "lat": 45.4642,
-    "lon": 9.1900,
-    "location": "Milan, Italy",
-    "style": "Gothic Revival",
-    "technique": "Pencil + Ink Wash",
-    "period": "14th Century",
-    "type": "arch",
-    "tags": ["cathedral", "gothic", "spires"],
-    "image_url": "https://..."
-  }
-]""", language="json")
-
-    st.subheader("Step 4 - Run your app")
+    st.subheader("Step 4 - Run")
     st.code("streamlit run app.py", language="bash")
-    st.success("Your app opens automatically at http://localhost:8501")
+    st.success("App opens at http://localhost:8501")
 
 # ══════════════════════════════════════════════════════════════════════════════
-# PAGE: GITHUB SETUP
+# GITHUB SETUP
 # ══════════════════════════════════════════════════════════════════════════════
 elif page == "GitHub Setup":
     st.title("Deploy on GitHub")
-    st.markdown("Push your Streamlit app to GitHub and deploy it live for free in under 10 minutes.")
+    st.markdown("Push your app to GitHub and deploy it free on Streamlit Cloud.")
     st.markdown("---")
 
     st.subheader("Step 1 - Initialize Git")
     st.code("""git init
 git add .
-git commit -m "Initial commit: ArchSketch Atlas app" """, language="bash")
+git commit -m "first commit" """, language="bash")
 
-    st.subheader("Step 2 - Create requirements.txt")
-    st.markdown("Save this as `requirements.txt` in your project root:")
+    st.subheader("Step 2 - requirements.txt")
     st.code("""streamlit==1.32.0
-pandas==2.1.0
-pillow==10.0.0
-requests==2.31.0""", language="text")
+pillow==10.0.0""", language="text")
 
     st.subheader("Step 3 - Push to GitHub")
-    st.code("""# Replace YOUR_USERNAME with your GitHub username
-git remote add origin https://github.com/YOUR_USERNAME/archsketch-atlas.git
+    st.code("""git remote add origin https://github.com/YOUR_USERNAME/my-sketch-app.git
 git branch -M main
 git push -u origin main""", language="bash")
 
     st.subheader("Step 4 - Deploy on Streamlit Cloud")
     st.markdown("""
 1. Go to **share.streamlit.io**
-2. Sign in with your GitHub account
+2. Sign in with GitHub
 3. Click **New app**
-4. Select your repository and set the main file to `wesketch.py`
+4. Select your repo, set main file to `wesketch.py`
 5. Click **Deploy**
-
-Your app will be live at:
 """)
-    st.code("https://YOUR_USERNAME-archsketch-atlas-app-XXXX.streamlit.app", language="text")
+    st.success("Your app goes live in minutes - completely free!")
 
-    st.subheader("Recommended Folder Structure")
-    st.code("""archsketch-atlas/
-  |-- wesketch.py        # your main Streamlit app
-  |-- requirements.txt   # dependencies
-  |-- sketches.json      # coordinate data
-  └── README.md          # project description""", language="text")
-
-    st.subheader("README Template")
-    st.code("""# ArchSketch Atlas
-
-An interactive explorer of architectural sketches with real-world
-geo-coordinates. Built with Streamlit and Python.
-
-## Features
-- Map view of sketch locations worldwide
-- Gallery with style and technique filters
-- JSON coordinate data for each sketch
-- Search by style, location, or technique
-
-## Run Locally
-    pip install -r requirements.txt
-    streamlit run wesketch.py
-
-## Deploy
-Visit share.streamlit.io and connect your GitHub repo.""", language="markdown")
+    st.subheader("Folder Structure")
+    st.code("""my-sketch-app/
+  |-- wesketch.py
+  |-- requirements.txt
+  |-- download__1_.webp
+  |-- 8dbc040517627df2c231b1960a11ea9d.jpg
+  |-- 9f8bb1bb3eab80672f50a9fe7d808d6f.jpg
+  |-- 44a492f4a756219233f5d44513dce581.jpg
+  |-- 13e6ba8b4488499b447f514839f5b6cd.jpg
+  |-- 556b93371196faa770e3897d82d10df0.jpg
+  |-- 292b02037f648f6c696718a4366a1739.webp
+  |-- df7589de976634ae0a97952fab719619.jpg
+  └── e867ecffda0b09b5f24ddcd8dd89d59b.webp""", language="text")
